@@ -18,15 +18,44 @@ import {
 
 import {
   Colors,
-  DebugInstructions,
   Header,
   LearnMoreLinks,
-  ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
 type SectionProps = PropsWithChildren<{
   title: string;
 }>;
+
+import RNFS from 'react-native-fs';
+
+const downloadAndReplaceBundle = async () => {
+  const bundleUrl =
+    'https://drive.google.com/uc?export=download&id=1sd_0TUJu10kj2JBVS3dTYaYeWOeMnYPW';
+  const localPath = `${RNFS.DocumentDirectoryPath}/index.android.bundle`;
+  console.log('Saving to:', localPath);
+
+  try {
+    const res = await RNFS.downloadFile({
+      fromUrl: bundleUrl,
+      toFile: localPath,
+    }).promise;
+
+    console.log(res.bytesWritten);
+    if (res.statusCode === 200 && res.bytesWritten > 0) {
+      const exists = await RNFS.exists(localPath);
+      if (exists) {
+        console.log('✅ Bundle downloaded and written to file:', localPath);
+        // Optional: Restart app here
+      } else {
+        console.error('❌ File does not exist after download');
+      }
+    } else {
+      console.error('❌ Failed to download or write bundle:', res);
+    }
+  } catch (err) {
+    console.error('❌ Error downloading bundle:', err);
+  }
+};
 
 function Section({children, title}: SectionProps): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
@@ -38,7 +67,8 @@ function Section({children, title}: SectionProps): React.JSX.Element {
           {
             color: isDarkMode ? Colors.white : Colors.black,
           },
-        ]}>
+        ]}
+        onPress={downloadAndReplaceBundle}>
         {title}
       </Text>
       <Text
@@ -78,10 +108,9 @@ function App(): React.JSX.Element {
         barStyle={isDarkMode ? 'light-content' : 'dark-content'}
         backgroundColor={backgroundStyle.backgroundColor}
       />
-      <ScrollView
-        style={backgroundStyle}>
+      <ScrollView style={backgroundStyle}>
         <View style={{paddingRight: safePadding}}>
-          <Header/>
+          <Header />
         </View>
         <View
           style={{
@@ -89,18 +118,8 @@ function App(): React.JSX.Element {
             paddingHorizontal: safePadding,
             paddingBottom: safePadding,
           }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
+          <Section title="This is build">
+            This is build two of the app, which is a simple React Native
           </Section>
           <LearnMoreLinks />
         </View>

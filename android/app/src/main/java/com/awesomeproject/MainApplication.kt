@@ -11,6 +11,10 @@ import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
 import com.facebook.react.defaults.DefaultReactNativeHost
 import com.facebook.react.soloader.OpenSourceMergedSoMapping
 import com.facebook.soloader.SoLoader
+import android.content.Context
+import android.content.SharedPreferences
+import java.io.File
+import android.util.Log
 
 class MainApplication : Application(), ReactApplication {
 
@@ -18,11 +22,28 @@ class MainApplication : Application(), ReactApplication {
       object : DefaultReactNativeHost(this) {
         override fun getPackages(): List<ReactPackage> =
             PackageList(this).packages.apply {
-              // Packages that cannot be autolinked yet can be added manually here, for example:
+              // Packages that cannot be autolinked yet can be added manually here
               // add(MyReactNativePackage())
             }
 
-        override fun getJSMainModuleName(): String = "index"
+        override fun getJSMainModuleName(): String {
+          // val prefs: SharedPreferences = applicationContext.getSharedPreferences("BUNDLE_PREFS", Context.MODE_PRIVATE)
+          // val useVariant: Boolean = prefs.getBoolean("use_variant", false)
+
+          // val filesDir: File = applicationContext.filesDir
+          // val jsBundle: File = File(filesDir, if (useVariant) "index2.android.bundle" else "index.android.bundle")
+
+          return "index"
+        }
+
+       override fun getJSBundleFile(): String? {
+          val file = File(applicationContext.filesDir, "index.android.bundle")
+          return if (file.exists()) {
+              file.absolutePath
+          } else {
+              null
+          }
+       }
 
         override fun getUseDeveloperSupport(): Boolean = BuildConfig.DEBUG
 
@@ -37,7 +58,6 @@ class MainApplication : Application(), ReactApplication {
     super.onCreate()
     SoLoader.init(this, OpenSourceMergedSoMapping)
     if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-      // If you opted-in for the New Architecture, we load the native entry point for this app.
       load()
     }
   }
