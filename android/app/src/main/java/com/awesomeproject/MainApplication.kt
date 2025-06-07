@@ -1,6 +1,10 @@
 package com.awesomeproject
 
 import android.app.Application
+import android.content.Context
+import android.content.SharedPreferences
+import android.util.Log
+
 import com.facebook.react.PackageList
 import com.facebook.react.ReactApplication
 import com.facebook.react.ReactHost
@@ -11,10 +15,9 @@ import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
 import com.facebook.react.defaults.DefaultReactNativeHost
 import com.facebook.react.soloader.OpenSourceMergedSoMapping
 import com.facebook.soloader.SoLoader
-import android.content.Context
-import android.content.SharedPreferences
+
 import java.io.File
-import android.util.Log
+
 
 class MainApplication : Application(), ReactApplication {
 
@@ -36,14 +39,23 @@ class MainApplication : Application(), ReactApplication {
           return "index"
         }
 
-       override fun getJSBundleFile(): String? {
-          val file = File(applicationContext.filesDir, "index.android.bundle")
-          return if (file.exists()) {
-              file.absolutePath
+        override fun getJSBundleFile(): String? {
+          // Get version string from file
+          val versionFile = File(applicationContext.filesDir, "version.txt")
+          val version = if (versionFile.exists()) versionFile.readText().trim() else null
+      
+          Log.d("VERSION", "Using version: $version")
+      
+          // Now resolve the actual bundle file
+          val jsBundleFile = version?.let { File(applicationContext.filesDir, it) }
+      
+          return if (jsBundleFile != null && jsBundleFile.exists()) {
+              jsBundleFile.absolutePath
           } else {
               null
           }
-       }
+      }
+      
 
         override fun getUseDeveloperSupport(): Boolean = BuildConfig.DEBUG
 
