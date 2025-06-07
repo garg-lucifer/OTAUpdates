@@ -4,6 +4,20 @@ This is a new [**React Native**](https://reactnative.dev) project, bootstrapped 
 
 > **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
 
+## Pre-Setup
+
+- In App.tsx, configure the Supabase client by replacing the placeholders with your actual project URL and public key:
+
+- Log in to your Supabase Dashboard, navigate to the Storage section, and create a new bucket named versions.
+
+- Generate the Android JS bundle.
+
+- (Optional but recommended) Rename the generated bundle file to follow a versioning format, such as 1.0.0, to make it easier to manage different versions.
+
+- Upload the renamed bundle to the versions bucket in Supabase Storage.
+
+- Finally, run your app to verify that everything is set up correctly and the bundle is being fetched and used as expected.
+
 ## Step 1: Start Metro
 
 First, you will need to run **Metro**, the JavaScript build tool for React Native.
